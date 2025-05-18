@@ -1,0 +1,21 @@
+﻿@page "/add-income"
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
+<PageTitle>
+	Add new income
+</PageTitle>
+
+<div class="row justify-content-center">
+	<div class="col-6">
+		<IncomeForm IsEdit="false" OnValidIncomeSubmit="SubmitIncome" />
+	</div>
+</div>
+@code {
+	
+	private async Task SubmitIncome(Income income)
+	{
+		await HttpClient.PostAsJsonAsync("Income", income);
+		NavigationManager.NavigateTo("/incomes");
+	}
+}

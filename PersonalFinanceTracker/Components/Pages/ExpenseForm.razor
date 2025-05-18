@@ -1,0 +1,84 @@
+﻿@inject IExpenseRepository ExpenseRepository
+
+@if (Expense is not null)
+{
+	<EditForm Enhance=true method="post" FormName="AddOrEditExpenceForm" Model="Expense" OnValidSubmit="AddOrEditExpense" autocomplete="off">
+		<h3>
+			@Title
+		</h3>
+		@if (IsEdit)
+		{
+			<input type="hidden" name="Expense.Id" value="@Expense.Id" />
+		}
+		<div class="mb-3">
+			<label for="expenseType" class="form-label">
+				Type
+			</label>
+			<InputSelect id="expenseType" @bind-Value="Expense.Type" class="form-control" shadow-none>
+				<option value="0">
+					Select expense type
+				</option>
+				@foreach (var expenseType in Enum.GetValues(typeof(ExpenseType)))
+				{
+					<option value="@expenseType">
+						@expenseType.ToString()
+					</option>
+				}
+			</InputSelect>
+		</div>
+		<div class="mb-3">
+			<label for="value" class="form-label">
+				Value
+			</label>
+			<InputNumber id="value" @bind-Value="Expense.Value" class="form-control shadow-none" />
+		</div>
+		<div class="mb-3">
+			<label for="incurredDate" class="form-label">
+				Incurred date
+			</label>
+			<InputDate id="incurredDate" @bind-Value="Expense.IncurredDate" class="form-control shadow-none" />
+		</div>
+		<div class="mb-3">
+			<button class="btn btn-primary shadow-none">
+				Submit
+			</button>
+			<a href="/expenses" class="btn btn-secondary shadow-none ms-3">
+				Back to List
+			</a>
+			<DataAnnotationsValidator />
+			<ValidationSummary class="text-danger" />
+		</div>
+	</EditForm>
+}
+@code {
+	[Parameter]
+	public bool IsEdit { get; set; } = false;
+	[Parameter]
+	public int ExpenseId { get; set; }
+	[Parameter]
+	
+	[SupplyParameterFromForm]
+	public Expense? Expense { get; set; } = new();
+
+	[Parameter]
+	public EventCallback<Expense> OnValidExpenseSubmit { get; set; }
+
+	private string Title => IsEdit ? $"Edit Expense {ExpenseId}" : "Add new expense";
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (IsEdit)
+		{
+			Expense ??= await ExpenseRepository.GetByIdAsync(ExpenseId);
+		}
+		else
+		{
+			Expense ??= new Expense();
+		}
+	}
+
+	private async Task AddOrEditExpense()
+	{
+		await OnValidExpenseSubmit.InvokeAsync(Expense);
+	}	
+}

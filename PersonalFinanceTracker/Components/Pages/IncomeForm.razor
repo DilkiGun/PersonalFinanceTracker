@@ -1,0 +1,85 @@
+﻿@inject IIncomeRepository IncomeRepository
+
+@if (Income is not null)
+{
+	<EditForm Enhance=true method="post" FormName="AddOrEditIncomeForm" Model="Income" OnValidSubmit="AddOrEditIncome" autocomplete="off">
+		<h3>
+			@Title
+		</h3>
+		@if (IsEdit)
+		{
+			<input type="hidden" name="Income.Id" value="@Income.Id" />
+		}
+		<div class="mb-3">
+			<label for="incomeType" class="form-label">
+				Type
+			</label>
+			<InputSelect id="incomeType" @bind-Value="Income.Type" class="form-control" shadow-none>
+				<option value="0">
+					Select income type
+				</option>
+				@foreach (var incomeType in Enum.GetValues(typeof(IncomeType)))
+				{
+					<option value="@incomeType">
+						@incomeType.ToString()
+					</option>
+				}
+			</InputSelect>
+		</div>
+		<div class="mb-3">
+			<label for="value" class="form-label">
+				Value
+			</label>
+			<InputNumber id="value" @bind-Value="Income.Value" class="form-control shadow-none" />
+		</div>
+		<div class="mb-3">
+			<label for="incurredDate" class="form-label">
+				Incurred date
+			</label>
+			<InputDate id="date" @bind-Value="Income.IncurredDate" class="form-control shadow-none" />
+		</div>
+		<div class="mb-3">
+			<button class="btn btn-primary shadow-none">
+				Submit
+			</button>
+			<DataAnnotationsValidator />
+			<ValidationSummary class="text-danger" />
+		</div>
+		<a href="/incomes" class="btn btn-secondary shadow-none ms-3">
+			Back to List
+		</a>
+	</EditForm>
+		
+}
+@code {
+	[Parameter]
+	public bool IsEdit { get; set; } = false;
+	[Parameter]
+	public int IncomeId { get; set; }
+	[Parameter]
+	
+	[SupplyParameterFromForm]
+	public Income? Income { get; set; } = new();
+
+	[Parameter]
+	public EventCallback<Income> OnValidIncomeSubmit { get; set; }
+
+	private string Title => IsEdit ? $"Edit Income {IncomeId}" : "Add new income";
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (IsEdit)
+		{
+			Income ??= await IncomeRepository.GetByIdAsync(IncomeId);
+		}
+		else
+		{
+			Income ??= new Income();
+		}
+	}
+
+	private async Task AddOrEditIncome()
+	{
+		await OnValidIncomeSubmit.InvokeAsync(Income);
+	}	
+}

@@ -1,0 +1,61 @@
+﻿@page "/incomes"
+@inject HttpClient HttpClient
+
+<PageTitle>
+	Incomes List
+</PageTitle>
+<div class="income-card">
+	<div class="income-card-body">
+		@if (incomes is null)
+		{
+			<div class="income-item">
+				<p>Loading...</p>
+			</div>
+		}
+		else if (incomes.Count == 0)
+		{
+			<p>No incomes found.</p>
+		}
+		else
+		{
+			foreach (var income in incomes)
+			{
+				<div class="income-item">
+				<div class="income-card">
+					<div class="income-card-body">
+						<h5 class="card-title">@income.Type</h5>
+						<p class="card-text">Value: @income.Value</p>
+						<p class="card-text">Incurred Date: @income.IncurredDate.ToShortDateString()</p>
+					</div>
+					<div class="actions">
+						<a href="@($"/edit/income/{income.Id}")" class="btn btn-secondary shadow-none">
+							Edit
+						</a>
+					</div>
+				</div>
+				</div>
+			}
+		}
+	</div>
+	<a href="/add-income" class="btn btn-primary shadow-none">
+		Add new income
+	</a>
+</div>
+
+    @code {  
+    private List<Income>? incomes;  
+
+    protected override async Task OnInitializedAsync()  
+    {  
+		incomes = await HttpClient.GetFromJsonAsync<List<Income>>("Income");
+		if (incomes == null)
+		{
+			incomes = new List<Income>();
+		}
+		else
+		{
+			incomes = incomes.OrderByDescending(e => e.IncurredDate).ToList();
+		}
+    }  
+    }
+

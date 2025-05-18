@@ -1,0 +1,59 @@
+﻿@page "/expenses"
+@inject HttpClient HttpClient
+
+<PageTitle>
+	Expenses List
+</PageTitle>
+<div class="expense-card">
+	 <div class="expence-card-body">
+		@if (expenses is null)
+		{
+			<div class="expence-item">
+				<p>Loading...</p>
+			</div>
+		}
+		else if (expenses.Count == 0)
+		{
+			<p>No expenses found.</p>
+		}
+		else
+		{
+			foreach (var expense in expenses)
+			{
+				<div class="expense-item">			
+				<div class="expense-card">
+					<div class="expense-card-body">
+						<h5 class="card-title">@expense.Type</h5>
+						Value: @expense.Value | Incurred Date: @expense.IncurredDate.ToShortDateString()
+					</div>
+					<div class="actions">
+						<a href="@($"/edit/expense/{expense.Id}")" class="btn btn-secondary shadow-none">
+							Edit
+						</a>
+					</div>
+				</div>
+				</div>
+			}
+		}
+	</div>
+	<a href="/add-expense" class="btn btn-primary shadow-none">
+		Add new expense
+	</a>
+</div>
+
+@code {
+	private List<Expense>? expenses;
+
+	protected override async Task OnInitializedAsync()
+	{
+		expenses = await HttpClient.GetFromJsonAsync<List<Expense>>("Expense");
+		if (expenses == null)
+		{
+			expenses = new List<Expense>();
+		}
+		else
+		{
+			expenses = expenses.OrderByDescending(e => e.IncurredDate).ToList();
+		}
+	}
+}
