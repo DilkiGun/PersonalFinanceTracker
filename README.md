@@ -17,11 +17,11 @@ The Personal Finance Tracker is a .net based application that helps users manage
 
 ## 🏗️ Architecture Overview
 
-UI layer -Blazor Server
-Application layer - Interfaces
-Infrastructure- Repositories,services
-Domain layer- Entites, enums
-Web Api- REST API controllers
+-UI layer -Blazor Server
+-Application layer - Interfaces
+-Infrastructure- Repositories,services
+-Domain layer- Entites, enums
+-Web Api- REST API controllers
 
 ## Prerequisites
 - .NET 6 SDK or above
