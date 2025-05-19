@@ -27,7 +27,7 @@
 						Value: @expense.Value | Incurred Date: @expense.IncurredDate.ToShortDateString()
 					</div>
 					<div class="actions">
-						<a href="@($"/edit/expense/{expense.Id}")" class="btn btn-secondary shadow-none">
+						<a href="@($"/edit/expense/{expense.Id}")" class="btn btn-primary shadow-none">
 							Edit
 						</a>
 					</div>
@@ -38,6 +38,9 @@
 	</div>
 	<a href="/add-expense" class="btn btn-primary shadow-none">
 		Add new expense
+	</a>
+	<a href="/" class="btn btn-primary shadow-none ms-3">
+		Home
 	</a>
 </div>
 

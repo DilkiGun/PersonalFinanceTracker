@@ -1,4 +1,4 @@
-﻿@inject IIncomeRepository IncomeRepository
+﻿@inject HttpClient HttpClient
 
 @if (Income is not null)
 {
@@ -36,7 +36,13 @@
 			<label for="incurredDate" class="form-label">
 				Incurred date
 			</label>
-			<InputDate id="date" @bind-Value="Income.IncurredDate" class="form-control shadow-none" />
+			<InputDate @bind-Value="Income.IncurredDate"
+					   AdditionalAttributes="@(new Dictionary<string, object>
+           {
+               { "id", "incurredDate" },
+               { "class", "form-control shadow-none" },
+               { "max", DateTime.Now.ToString("yyyy-MM-dd") }
+           })" />
 		</div>
 		<div class="mb-3">
 			<button class="btn btn-primary shadow-none">
@@ -44,12 +50,12 @@
 			</button>
 			<DataAnnotationsValidator />
 			<ValidationSummary class="text-danger" />
-		</div>
-		<a href="/incomes" class="btn btn-secondary shadow-none ms-3">
-			Back to List
-		</a>
+			<a href="/incomes" class="btn btn-primary shadow-none ms-3">
+				Back to List
+			</a>
+		</div>		
 	</EditForm>
-		
+
 }
 @code {
 	[Parameter]
@@ -57,9 +63,9 @@
 	[Parameter]
 	public int IncomeId { get; set; }
 	[Parameter]
-	
+
 	[SupplyParameterFromForm]
-	public Income? Income { get; set; } = new();
+	public Income? Income { get; set; }
 
 	[Parameter]
 	public EventCallback<Income> OnValidIncomeSubmit { get; set; }
@@ -70,7 +76,7 @@
 	{
 		if (IsEdit)
 		{
-			Income ??= await IncomeRepository.GetByIdAsync(IncomeId);
+			Income ??= await HttpClient.GetFromJsonAsync<Income>($"Income/{IncomeId}");
 		}
 		else
 		{

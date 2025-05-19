@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using PersonalFinanceTracker.Application.Interfaces;
 using PersonalFinanceTracker.Domain.Entities;
 using PersonalFinanceTracker.Infrastructure.Context;
@@ -38,7 +33,7 @@ namespace PersonalFinanceTracker.Infrastructure
 
         public async Task UpdateAsync(Expense expense)
         {
-            context.Expenses.Update(expense);
+            context.Entry(expense).State = EntityState.Modified;
             await context.SaveChangesAsync();
         }
     }

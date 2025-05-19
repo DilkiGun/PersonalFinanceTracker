@@ -1,0 +1,23 @@
+﻿@page "/edit/income/{id:int}"
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+<PageTitle>
+	Edit Income
+</PageTitle>
+
+<div class="row justify-content-center">
+	<div class="col-6">
+		<IncomeForm IsEdit="true" IncomeId="@Id" OnValidIncomeSubmit="SubmitIncome" />
+	</div>	
+</div>
+@code {
+	
+	[Parameter]
+	public int Id { get; set; }
+
+	private async Task SubmitIncome(Income income)
+	{
+		await HttpClient.PutAsJsonAsync($"Income/{Id}", income);
+		NavigationManager.NavigateTo("/incomes");		
+	}
+}

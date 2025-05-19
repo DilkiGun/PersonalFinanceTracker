@@ -2,6 +2,7 @@ using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Mvc;
 using PersonalFinanceTracker.Application.Interfaces;
 using PersonalFinanceTracker.Domain.Entities;
+using PersonalFinanceTracker.Infrastructure;
 
 namespace PersonalFinanceTracker.WebApi
 {
@@ -41,8 +42,13 @@ namespace PersonalFinanceTracker.WebApi
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateIncome(int id, [FromBody] Income income)
         {
-            if (id != income.Id) return BadRequest();
-            await _incomeService.UpdateIncomeAsync(income);
+            if (income == null) return BadRequest("Income cannot be null.");
+            var existingIncome=await  _incomeService.GetIncomeByIdAsync(id);
+            if (existingIncome == null) return NotFound();
+            existingIncome.Value = income.Value;
+            existingIncome.Type = income.Type;
+            existingIncome.IncurredDate = income.IncurredDate;
+            await _incomeService.UpdateIncomeAsync(existingIncome);
             return NoContent();
         }
     }

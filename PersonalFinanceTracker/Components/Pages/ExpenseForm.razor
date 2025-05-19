@@ -1,4 +1,4 @@
-﻿@inject IExpenseRepository ExpenseRepository
+﻿@inject HttpClient HttpClient
 
 @if (Expense is not null)
 {
@@ -36,13 +36,21 @@
 			<label for="incurredDate" class="form-label">
 				Incurred date
 			</label>
-			<InputDate id="incurredDate" @bind-Value="Expense.IncurredDate" class="form-control shadow-none" />
+			<InputDate @bind-Value="Expense.IncurredDate"
+					   AdditionalAttributes="@(new Dictionary<string, object>
+           {
+               { "id", "incurredDate" },
+               { "class", "form-control shadow-none" },
+               { "max", DateTime.Now.ToString("yyyy-MM-dd") }
+           })" />
+
+
 		</div>
 		<div class="mb-3">
 			<button class="btn btn-primary shadow-none">
 				Submit
 			</button>
-			<a href="/expenses" class="btn btn-secondary shadow-none ms-3">
+			<a href="/expenses" class="btn btn-primary shadow-none ms-3">
 				Back to List
 			</a>
 			<DataAnnotationsValidator />
@@ -56,9 +64,9 @@
 	[Parameter]
 	public int ExpenseId { get; set; }
 	[Parameter]
-	
+
 	[SupplyParameterFromForm]
-	public Expense? Expense { get; set; } = new();
+	public Expense? Expense { get; set; }
 
 	[Parameter]
 	public EventCallback<Expense> OnValidExpenseSubmit { get; set; }
@@ -69,7 +77,9 @@
 	{
 		if (IsEdit)
 		{
-			Expense ??= await ExpenseRepository.GetByIdAsync(ExpenseId);
+			
+			Expense ??= await HttpClient.GetFromJsonAsync<Expense>($"Expense/{ExpenseId}");
+			
 		}
 		else
 		{

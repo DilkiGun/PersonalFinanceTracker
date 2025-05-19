@@ -1,5 +1,5 @@
 ﻿@page "/edit/expense/{id:int}"
-@inject IExpenseRepository ExpenseRepository
+@inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
 <PageTitle>
 	Edit expense
@@ -17,7 +17,11 @@
 
 	private async Task SubmitExpense(Expense expense)
 	{
-		await ExpenseRepository.UpdateAsync(expense);
-		NavigationManager.NavigateTo("/expenses");
+		var response = await HttpClient.PutAsJsonAsync($"Expense/{expense.Id}", expense);
+
+		if (response.IsSuccessStatusCode)
+		{
+			NavigationManager.NavigateTo("/expenses");
+		}			
 	}
 }

@@ -12,6 +12,6 @@ namespace PersonalFinanceTracker.Domain.Entities
         [Required]
         [EnumDataType(typeof(ExpenseType),ErrorMessage="Please select an expense type")]
         public ExpenseType Type { get; set; }
-        public DateTime IncurredDate { get; set; }
+        public DateTime IncurredDate { get; set; } = DateTime.Now;
     }    
 }

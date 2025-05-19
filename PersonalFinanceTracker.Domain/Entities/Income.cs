@@ -11,6 +11,6 @@ namespace PersonalFinanceTracker.Domain.Entities
         public decimal Value { get; set; }
         [Required]
         public IncomeType Type { get; set; }
-        public DateTime IncurredDate { get; set; }
+        public DateTime IncurredDate { get; set; } = DateTime.Now;
     }
 }
